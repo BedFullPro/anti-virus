@@ -2,6 +2,7 @@ import os
 import subprocess
 import platform
 import requests
+import sys
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
@@ -10,9 +11,6 @@ username = os.getlogin()
 
 # Directory to monitor for downloads
 DOWNLOADS_DIR = os.path.join("C:", "Users", username, "Downloads")
-
-# VirusTotal API key (replace 'YOUR_API_KEY' with your actual API key)
-API_KEY = 'adcf2301fd56a4681bc43e53cd371e5a681498d11b2d752622507aaaacec1464'
 
 # Function to download a file from a URL
 def download_file(url, save_path):
@@ -23,10 +21,10 @@ def download_file(url, save_path):
                 file.write(chunk)
 
 # Function to scan a file using VirusTotal API
-def scan_file(file_path):
+def scan_file(file_path, api_key):
     print(f"Scanning file: {file_path}")
     url = 'https://www.virustotal.com/vtapi/v2/file/scan'
-    params = {'apikey': API_KEY}
+    params = {'apikey': api_key}
     files = {'file': (file_path, open(file_path, 'rb'))}
     response = requests.post(url, files=files, params=params)
     if response.status_code == 200:
@@ -37,7 +35,7 @@ def scan_file(file_path):
             if positives > 0:
                 print(f"Virus detected by {positives} out of {result['total']} scanners.")
                 # Optionally, you can remove the file here
-                 os.remove(file_path)
+                # os.remove(file_path)
             else:
                 print("No virus detected.")
         else:
@@ -55,7 +53,7 @@ class DownloadHandler(FileSystemEventHandler):
             return
         else:
             print(f"New file detected: {event.src_path}")
-            scan_file(event.src_path)
+            scan_file(event.src_path, sys.argv[1])  # Pass the API key as an argument
 
 if __name__ == "__main__":
     # Start monitoring the downloads directory
