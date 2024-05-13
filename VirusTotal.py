@@ -12,7 +12,7 @@ username = os.getlogin()
 DOWNLOADS_DIR = os.path.join("C:", "Users", username, "Downloads")
 
 # VirusTotal API key (replace 'YOUR_API_KEY' with your actual API key)
-API_KEY = 'YOUR_API_KEY'
+API_KEY = 'adcf2301fd56a4681bc43e53cd371e5a681498d11b2d752622507aaaacec1464'
 
 # Function to download a file from a URL
 def download_file(url, save_path):
@@ -37,7 +37,7 @@ def scan_file(file_path):
             if positives > 0:
                 print(f"Virus detected by {positives} out of {result['total']} scanners.")
                 # Optionally, you can remove the file here
-                # os.remove(file_path)
+                 os.remove(file_path)
             else:
                 print("No virus detected.")
         else:
